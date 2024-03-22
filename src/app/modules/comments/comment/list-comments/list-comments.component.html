@@ -1,0 +1,20 @@
+
+
+<h3>{{ "COMMENTS" | translate }}</h3>
+@for (comments of comments; track $index){
+<mat-list >
+        <mat-list-item>
+            <h4 matListItemTitle> PostId: {{ comments?.postId }}</h4>
+            <span matListItemLine> Id: {{ comments?.id }}</span>
+            <span matListItemLine> {{ "NAME" | translate }}: {{ comments?.name }}</span>
+            <span matListItemLine> {{ "EMAIL" | translate }}: {{ comments?.email }}</span>
+            <p matListItemLine> {{ "CONTENTS" | translate }}: {{ comments?.body }}</p>
+        
+          </mat-list-item>
+</mat-list>
+
+}@empty{
+    <p>{{ "THERE_ARE_NO_DATA" | translate }}</p>
+}
+
+<app-spinner></app-spinner>

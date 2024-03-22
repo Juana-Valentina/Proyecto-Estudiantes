@@ -1,0 +1,24 @@
+<app-navbar></app-navbar>
+
+<div class="container">
+  <h1> {{ "DETAILS_ID" | translate }} {{post.id}}  </h1>
+  <h2> {{"TITLE" | translate }}: {{ post.title }}</h2>
+  <p>  {{ "CONTENTS" | translate }}: {{ post.body }}</p>
+
+  <div class="button-group">
+    <app-back [rute]="ruta" ></app-back>
+    <button mat-button color="accent" (click)="verComments()">{{showComments ? ('HIDE' | translate) : ('SEE_MORE' | translate)}}</button>
+  </div>
+  
+  
+
+  <div style="padding: 10px; width: 100%;">
+    @if (showComments){
+  <app-list-comments [postId]="idPost"></app-list-comments>
+    }
+  
+
+</div>
+</div>
+
+<app-spinner></app-spinner>

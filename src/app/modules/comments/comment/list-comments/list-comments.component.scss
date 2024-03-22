@@ -1,0 +1,29 @@
+.mat-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.mat-list-item {
+    width: calc(33.33% - 20px); /* Tres columnas con 20px de espacio entre ellas */
+    margin-bottom: 20px;
+    border: 1px solid #ccc; /* Añade un borde al contenedor */
+    padding: 10px; /* Añade un espacio interior */
+    border-radius: 5px; /* Añade bordes redondeados */
+}
+
+h4, span, p {
+    margin: 5px 0; /* Añade espacio entre los elementos */
+}
+
+h3 {
+    text-align: center; /* Centra el título "COMMENTS" */
+}
+
+p {
+    color: black;
+}
+
+mat-card-actions {
+    justify-content: center;
+}

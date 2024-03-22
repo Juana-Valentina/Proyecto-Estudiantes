@@ -1,0 +1,25 @@
+<app-navbar></app-navbar>
+
+<h1>{{ "POST_LIST" | translate  }}</h1>
+
+<div class="container">
+    <div class="row">
+        @for (post of posts; track $index) {
+            <mat-card class="example-card">
+                <mat-card-header>
+                    <mat-card-title>{{ post?.title | uppercase }}</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <p>{{ post?.body | slice:0:60 }}...</p>
+                </mat-card-content>
+                <mat-card-actions>
+                    <button mat-button color="accent" (click)="detalles(post?.id)"> {{ "SEE_MORE" | translate }} </button>
+                </mat-card-actions>
+            </mat-card>
+        }@empty {
+            <p>{{ "THERE_ARE_NO_DATA" | translate }}</p>
+        }
+    </div>
+</div>
+
+<app-spinner></app-spinner>

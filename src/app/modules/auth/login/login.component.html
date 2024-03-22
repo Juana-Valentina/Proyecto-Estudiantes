@@ -1,0 +1,28 @@
+<div class="container">
+  <form [formGroup]="form" class="form-grid" >
+    <h3 class="form-title">{{ 'LOGIN' | translate }}</h3>
+    
+    <!-- Campo para el correo electrónico -->
+    <mat-form-field class="example-full-width" color="accent">
+      <mat-label color="accent">{{ 'E-MAIL' | translate }}</mat-label>
+      <input matInput placeholder="{{ 'ENTER_YOUR_EMAIL' | translate }}" formControlName="email" type="email" required>
+      <app-m-obligatorio [control]="form.controls.email" [message]="'THE_EMAIL_IS_REQUIRED' | translate"></app-m-obligatorio>
+      <mat-icon matSuffix color="accent">{{icon1}}</mat-icon>
+    </mat-form-field>
+
+    <!-- Campo para la contraseña -->
+    <mat-form-field class="example-full-width" color="accent">
+      <mat-label color="accent">{{ 'PASSWORD' | translate }}</mat-label>
+      <input matInput placeholder="{{ 'ENTER_YOUR_PASSWORD' | translate }}" formControlName="password" [type]="hide ? 'password' : 'text'" required>
+      <mat-icon matSuffix color="accent" (click)="visibilidad()">{{hide ? 'lock' : 'lock_open'}}</mat-icon>
+      <app-m-obligatorio [control]="form.controls.password" [message]="'THE_PASSWORD_IS_REQUIRED' | translate"></app-m-obligatorio>
+    </mat-form-field>
+
+    <!-- Botón para enviar el formulario -->
+    <button mat-raised-button color="accent" class="submit-btn" [disabled]="form.invalid" (click)="save()">{{ 'SEND' | translate }}</button>
+  </form>
+</div>
+
+<app-spinner>
+
+  <!-- color="accent" -->

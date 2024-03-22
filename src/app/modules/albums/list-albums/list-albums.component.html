@@ -1,0 +1,29 @@
+<app-navbar></app-navbar>
+
+<h1> {{"ALBUMS" | translate}} </h1>
+ 
+<div class="container">
+    <div class="row">
+        @for (albums of albums; track $index) {
+            <mat-card class="example-card">
+                <mat-card-header>
+                  <mat-card-title>UserId: {{albums.userId}}</mat-card-title>
+                  <mat-card-subtitle>Id: {{albums.id}}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <p>titulo: {{albums.title}}</p>
+                </mat-card-content>
+                <mat-card-actions>
+                    <app-back [rute]="ruta" ></app-back>
+                </mat-card-actions>
+              </mat-card>
+              
+              
+        }@empty {
+            <p>{{ "THERE_ARE_NO_DATA" | translate }}</p>
+        }
+    </div>
+
+</div>
+
+<app-spinner></app-spinner>

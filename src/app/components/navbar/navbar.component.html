@@ -1,0 +1,31 @@
+<mat-toolbar color="white">
+  <button mat-button routerLink="/home-page" color="accent">
+    <mat-icon>home</mat-icon>
+  </button>
+  
+
+  <button mat-button routerLink="/post/list" color="accent">
+    <mat-icon>description</mat-icon>
+    Post
+  </button>
+  <button mat-button routerLink="/post/list-albums" color="accent">
+    <mat-icon>album</mat-icon>
+    Albums
+  </button>
+  <app-back ></app-back>
+  <button mat-button routerLink="/auth/log-in" color="accent">
+    <mat-icon>account_circle</mat-icon>
+    Login
+  </button>
+  <button mat-button routerLink="/auth/register-u" color="accent">
+    <mat-icon>person_add</mat-icon>
+    Register
+  </button>
+  <mat-menu #idiomaMenu="matMenu">
+    <button mat-menu-item (click)="changeLanguage('es')">Español</button>
+  <button mat-menu-item (click)="changeLanguage('en')">Inglés</button>
+  </mat-menu>
+  <button mat-icon-button [matMenuTriggerFor]="idiomaMenu" color="accent">
+    <mat-icon>language</mat-icon>
+  </button>
+</mat-toolbar>
