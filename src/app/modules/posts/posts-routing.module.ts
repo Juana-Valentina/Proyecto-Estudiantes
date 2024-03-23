@@ -6,14 +6,12 @@ import { ListAlbumsComponent } from '../albums/list-albums/list-albums.component
 import { guardsGuard } from '../../shared/auth-guard/guards.guard';
 
 const routes: Routes = [
-  {path: '' , children: [
-    {path: 'list' , component: ListPostsComponent, canActivate: [guardsGuard]},
-    {path: 'detail' , component: DetailPostComponent, canActivate: [guardsGuard]}, 
-    {path: 'list-albums' , component: ListAlbumsComponent, canActivate: [guardsGuard]}, 
-    
+  { path: '', children: [
+    { path: 'list', component: ListPostsComponent, canActivate: [guardsGuard] },
+    // Añadir un parámetro ':id' para acceder a detalles específicos del post
+    { path: 'detail/:id', component: DetailPostComponent, canActivate: [guardsGuard] },
+    { path: 'list-albums', component: ListAlbumsComponent, canActivate: [guardsGuard] },
   ]},
-
-
 ];
 
 @NgModule({

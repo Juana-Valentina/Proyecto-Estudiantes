@@ -5,14 +5,15 @@ import { guardsGuard } from '../../shared/auth-guard/guards.guard';
 import { RegisterComponent } from './register/register.component';
 
 const routes: Routes = [
-  {path: '' , children: [
-    {path: '**' , component: LoginComponent},
-    {path: 'log-in' , component: LoginComponent},  
-    {path: 'register-u' , component: RegisterComponent},  
-    
-  ]},
- 
-
+  { path: '', children: [
+    // Ruta comodín para manejar cualquier ruta no definida dentro del módulo de autenticación
+    { path: '**', component: LoginComponent, canActivate: [guardsGuard] },
+    // Ruta para el login
+    { path: 'log-in', component: LoginComponent, canActivate: [guardsGuard] },
+    // Ruta para el registro
+    { path: 'sign-up', component: RegisterComponent, canActivate: [guardsGuard] }
+  ]}
+  
 ];
 
 @NgModule({

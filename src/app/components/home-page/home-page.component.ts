@@ -7,12 +7,12 @@ import { HelperService } from '../../services/helper.service';
   styleUrl: './home-page.component.scss'
 })
 export class HomePageComponent implements OnInit {
-  userEmail: string | null = null;
+  userName: string | null = null;
 
   constructor(public helperService: HelperService) {}
 
   ngOnInit(): void {
-    this.userEmail = this.helperService.getLocalSorage('user') ? 
-    JSON.parse(this.helperService.getLocalSorage('user') || '{}').email : null;
+    this.userName = this.helperService.getLocalSorage('user') ? 
+    JSON.parse(this.helperService.getLocalSorage('user') || '{}').name : null;
   }
 }

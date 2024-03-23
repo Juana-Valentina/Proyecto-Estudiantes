@@ -18,8 +18,11 @@
       <app-m-obligatorio [control]="form.controls.password" [message]="'THE_PASSWORD_IS_REQUIRED' | translate"></app-m-obligatorio>
     </mat-form-field>
 
-    <!-- Botón para enviar el formulario -->
+    <!-- Botón para enviar el formulario y para registrar  -->
+    <div class="button-group">
     <button mat-raised-button color="accent" class="submit-btn" [disabled]="form.invalid" (click)="save()">{{ 'SEND' | translate }}</button>
+    <button mat-raised-button color="accent" class="submit-btn" (click)="signUp()" >{{ 'REGISTER' | translate }}</button>
+    </div>
   </form>
 </div>
 

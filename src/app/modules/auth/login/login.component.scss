@@ -34,3 +34,10 @@ h3 span{
 .submit-btn {
   width: 100%; 
 }
+
+.button-group {
+  display: flex; 
+  justify-content: space-between; 
+  width: 100%; 
+  gap: 10px;
+}

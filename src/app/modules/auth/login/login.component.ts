@@ -29,40 +29,48 @@ export class LoginComponent{
     password: new FormControl('', Validators["required"]),
   })
 
-  save(): void{
-
-    // TODO hacer algo similar al regster, se compara el correo y la contraseña si son validos ingresara 
-  //   this.api.getObs(apiRouters.USERS, true).subscribe({
-  //     let Usern = null;
-  //     for (let user of users) {
-  //       if (user.email === this.form.value.email && user.password === this.form.value.password) {
-  //         Usern = user;
-  // });
-
-
-     if (this.form.value.email === 'juanasena-2005@outlook.com' && (this.form.value.password === '3996')){
-      // if (user.name ===  && ){
-
-      const data ={
-        email: 'juanasena-2005@outlook.com',
-        password: '3996'
-      }
-      this.helperService.setLocalStorage('user', JSON.stringify(data));
-      this.helperService.setLocalStorage('session', 'true');
-      this.router.navigateByUrl('home-page');
-
-    }else{
-      this.helperService.alert('error', 'datos invalidos', 'error')
+  save(): void {
+    if (this.form.invalid) {
+      this.helperService.alert('Error', 'Datos inválidos', 'error');
+      return;
     }
-    
-    this.helperService.spinnerHidder()
+
+    this.helperService.spinnerShow();
+
+    this.api.getObs(apiRouters.USERS, true).subscribe({
+      next: (resp) => {
+        const data: Array <any> = resp;
+        let usuario = data.find(item => 
+          item.email === this.form.value.email && 
+          item.password === this.form.value.password);
+
+
+        if (usuario) {
+          this.helperService.alert('Éxito', 'Inicio de sesión correcto', 'success');
+          this.helperService.setLocalStorage('user', JSON.stringify(usuario));
+          this.helperService.setLocalStorage('session', 'true');
+          this.router.navigateByUrl('/home-page');
+        } else {
+          this.helperService.alert('Error', 'Correo electrónico o contraseña incorrecta', 'error');
+        }
+        this.helperService.spinnerHidder();
+      },
+      error: () => {
+        this.helperService.alert('Error', 'Error al intentar iniciar sesión', 'error');
+        this.helperService.spinnerHidder();
+      }
+    });
   }
 
   visibilidad(): void {
     this.hide = !this.hide; 
 }
+
+signUp(): void {
+  this.router.navigate(['sign-up']);
+} //cierre del save
  
-}
+} //cierre final 
 
 //  probando(): void{
 //   if (this.age < 3 ){

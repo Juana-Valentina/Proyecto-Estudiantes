@@ -22,6 +22,11 @@ import { Expresionesr } from '../../core/config/expresiones-r';
     RegisterComponent
   ],
 
+  exports:[
+    LoginComponent,
+    RegisterComponent
+  ],
+
   imports: [
     CommonModule,
     AuthRoutingModule,

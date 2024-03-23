@@ -35,3 +35,15 @@
     width: 100%; 
   }
   
+  .image-preview {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  
+    img {
+      max-width: 150px; /* Ajusta este valor según sea necesario */
+      max-height: 150px; /* Ajusta este valor según sea necesario */
+      width: auto;
+      height: auto;
+    }
+  }
