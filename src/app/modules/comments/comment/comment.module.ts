@@ -8,6 +8,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSpinner, NgxSpinnerComponent, NgxSpinnerModule } from 'ngx-spinner';
 import { ComponentsModule } from "../../../components/components.module";
 import { AppComponent } from '../../../app.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SpinnerComponent } from '../../../components/spinner/spinner.component';
 
 
 @NgModule({
@@ -16,6 +18,7 @@ import { AppComponent } from '../../../app.component';
     ],
     exports: [
         ListCommentsComponent,
+        SpinnerComponent
     ],
     imports: [
       CommonModule,
@@ -24,7 +27,8 @@ import { AppComponent } from '../../../app.component';
       TranslateModule,
       NgxSpinnerModule,
       ComponentsModule,
-      AppComponent
+      AppComponent,
+      MatProgressSpinnerModule,
   ]
 })
 export class CommentModule { }

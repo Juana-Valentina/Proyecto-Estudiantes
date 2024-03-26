@@ -7,10 +7,10 @@ import { guardsGuard } from '../../shared/auth-guard/guards.guard';
 
 const routes: Routes = [
   { path: '', children: [
-    { path: 'list', component: ListPostsComponent, canActivate: [guardsGuard] },
+    { path: 'list', component: ListPostsComponent },
     // Añadir un parámetro ':id' para acceder a detalles específicos del post
-    { path: 'detail/:id', component: DetailPostComponent, canActivate: [guardsGuard] },
-    { path: 'list-albums', component: ListAlbumsComponent, canActivate: [guardsGuard] },
+    { path: 'detail/:id', component: DetailPostComponent},
+    { path: 'list-albums', component: ListAlbumsComponent},
   ]},
 ];
 

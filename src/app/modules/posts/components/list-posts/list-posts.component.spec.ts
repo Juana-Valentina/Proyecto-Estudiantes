@@ -49,15 +49,19 @@ fdescribe('ListPostsComponent', () => {
     expect(component).toBeDefined();
   });
 
+  // Comprueba si el método ngOnInit() llama internamente al método getpost().
   it('#ngOnInit()', () => {
     spyOn(component ,'getpost');
     component.ngOnInit();
     expect(component.getpost).toHaveBeenCalled()
   });
 
+  // Prueba el método getpost() para verificar si obtiene datos exitosamente.
   it('#getpost()',  function (done) {
 
     let data: any[] | jasmine.AsymmetricMatcher<any> | jasmine.Spy<jasmine.Func> | { [x: number]: jasmine.ExpectedRecursive<Post>; length: jasmine.ExpectedRecursive<number>; } = [
+      // Ejemplo de datos de la API.
+
       // {
       //   "userId": 1,
       //   "id": 1, 
@@ -76,9 +80,9 @@ fdescribe('ListPostsComponent', () => {
       }
     })
 
-
   });
 
+  // Verifica el manejo de errores en el método getpost().
   it('#getpost() Error ', function (done) {
        const errorHttpMock = new HttpErrorResponse({
         error: {
@@ -103,12 +107,13 @@ fdescribe('ListPostsComponent', () => {
 
     });
 
+    // Verifica si el método detalles() navega correctamente.
   it('#detalles', function () {
     spyOn(component.router , 'navigate')
     let id = 1;
     component.detalles(id)
-    expect(component.router.navigate).toHaveBeenCalledWith(['post/detail'], { queryParams: { id } })
+    expect(component.router.navigate).toHaveBeenCalledWith(['post/detail/:id'], { queryParams: { id } })
 
   });
 
-}); //final
+}); 

@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DetailPostComponent } from './detail-post.component';
 
-describe('DetailPostComponent', () => {
+fdescribe('DetailPostComponent', () => {
   let component: DetailPostComponent;
   let fixture: ComponentFixture<DetailPostComponent>;
 

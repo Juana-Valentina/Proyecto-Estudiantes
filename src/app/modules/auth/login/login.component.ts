@@ -16,12 +16,11 @@ export class LoginComponent{
 
   name = new FormControl('');
   hide: boolean = true ;
-  show: string = 'r';
   
   constructor( 
     public helperService: HelperService,
     public router: Router,
-    public api: ApiService
+    public api: ApiService,
   ){}
 
   form = new FormGroup({
@@ -68,32 +67,10 @@ export class LoginComponent{
 
 signUp(): void {
   this.router.navigate(['sign-up']);
-} //cierre del save
+} 
  
 } //cierre final 
 
-//  probando(): void{
-//   if (this.age < 3 ){
-//   console.log(this.message = "hola");
-
-// }else if(this.age < 18){
-//   console.log(this.message = 'holi');
-  
-// }else if(this.age < 100){
-//   console.log(this.message = 'felicidad');
-
-// }else {
-//   console.log(this.message = 'bye');
-
-// }
-
-
-// this.age < 3 ? console.log(this.message = 'hola') : this.age < 18 ? console.log(this.message = 'holi') :
-// this.age < 100 ? console.log(this.message = 'felicidad') : console.log(this.message= 'bye');
-
-
-
-//  condición ? expresión_si_verdadero : expresión_si_falso
 
 //condición1 ? expresión_si_condición1_verdadero : condición2 ? expresión_si_condición2_verdadero : expresión_si_condición2_falso
 

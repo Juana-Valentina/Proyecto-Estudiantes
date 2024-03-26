@@ -40,6 +40,6 @@ export class ListPostsComponent implements OnInit {
   }
 
   detalles(id: number): void {
-    this.router.navigate(['post/detail'], { queryParams: { id } });
+    this.router.navigate(['post/detail/:id'], { queryParams: { id } });
   }
 }

@@ -12,7 +12,7 @@ export class HomePageComponent implements OnInit {
   constructor(public helperService: HelperService) {}
 
   ngOnInit(): void {
-    this.userName = this.helperService.getLocalSorage('user') ? 
-    JSON.parse(this.helperService.getLocalSorage('user') || '{}').name : null;
-  }
+  const user = this.helperService.getLocalStorage('user');
+  this.userName = user ? JSON.parse(user).name ?? null : null;
+}
 }

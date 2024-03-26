@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { AppComponent } from '../app.component';
 import Swal from 'sweetalert2';
 
 @Injectable({
@@ -45,7 +44,7 @@ field(formGroup: FormGroup): void {
   });
 }
 
-getLocalSorage(item: any): string | undefined{
+getLocalStorage(item: any): string | undefined{
   if(localStorage.getItem(item)) {
     item = localStorage.getItem(item);
     return item;

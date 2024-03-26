@@ -4,6 +4,7 @@ import { ApiService } from '../../../../services/api.service';
 import { apiRouters } from '../../../../core/config/apiRouters';
 import { Comments } from '../../../../shared/interfaces/comments'; 
 
+
 @Component({
   selector: 'app-list-comments',
   templateUrl: './list-comments.component.html',
@@ -22,6 +23,11 @@ export class ListCommentsComponent implements OnInit {
   }
 
   getComments(): void {
+    if (!this.postId) {
+      console.log('El ID del mensaje no está definido. No se pueden recuperar comentarios.');
+      return;
+    }
+
     this.helperService.spinnerShow();
     //llama HTTP GET usando el servicio ApiService para obtener los comentarios del post específico.
     this.api.getOb(`${apiRouters.POST_GET}/${this.postId}${apiRouters.COMMENTS}`).subscribe({

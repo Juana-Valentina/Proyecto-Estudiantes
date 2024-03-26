@@ -4,20 +4,20 @@
   </button>
   
 
-  <button mat-button routerLink="/post/list" color="accent">
+  <button mat-button [routerLink]="['/post/list']" color="accent">
     <mat-icon>description</mat-icon>
     Post
   </button>
-  <button mat-button routerLink="/post/list-albums" color="accent">
+  <button mat-button [routerLink]="['/post/list-albums']" color="accent">
     <mat-icon>album</mat-icon>
     Albums
   </button>
   <app-back ></app-back>
-  <button mat-button routerLink="/auth/log-in" color="accent">
+  <button mat-button [routerLink]="['/auth/log-in']" color="accent">
     <mat-icon>account_circle</mat-icon>
     Login
   </button>
-  <button mat-button routerLink="/auth/register-u" color="accent">
+  <button mat-button [routerLink]="['/auth/register-u']" color="accent">
     <mat-icon>person_add</mat-icon>
     Register
   </button>

@@ -3,17 +3,14 @@ import { CommonModule } from '@angular/common';
 
 import { AuthRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './login/login.component';
-import { NgxSpinnerModule } from 'ngx-spinner';
-import { MaterialModule } from '../material/material.module';
-import { TranslateModule } from '@ngx-translate/core';
-import { ComponentsModule } from '../../components/components.module';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
-import { MObligatorioComponent } from '../../components/m-obligatorio/m-obligatorio.component';
+import { ComponentsModule } from '../../components/components.module';
+import { MaterialModule } from '../material/material.module';
 import { RegisterComponent } from './register/register.component';
-import { Expresionesr } from '../../core/config/expresiones-r';
 
 
 @NgModule({

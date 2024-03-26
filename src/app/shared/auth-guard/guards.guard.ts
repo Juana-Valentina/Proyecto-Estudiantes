@@ -7,11 +7,11 @@ export const guardsGuard: CanActivateFn = (route, state) => {
  const router = inject (Router);
  
 
-  if (helperService.getLocalSorage('session')){
+  if (helperService.getLocalStorage('session')){
     return true;
 
   } else {
-    const url = router.createUrlTree (["/auth/log-in"]) 
+    const url = router.createUrlTree(["/auth/log-in"]) 
     return url;
 
   }
