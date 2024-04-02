@@ -5,9 +5,9 @@ import { Router } from '@angular/router';
 import { MaterialModule } from '../../modules/material/material.module';
 import { RouterTestingModule } from '@angular/router/testing';
 
-// 'fdescribe' significa que sólo esta suite de pruebas se ejecutará. Cambia a 'describe' para evitar esto.
+// 'fdescribe' significa que sólo esta suite de pruebas se ejecutará. 
 fdescribe('BackComponent', () => {
-  // Variables para nuestro componente y su envoltorio de pruebas.
+  // Variables para el componente 
   let component: BackComponent; 
   let fixture: ComponentFixture<BackComponent>;
 

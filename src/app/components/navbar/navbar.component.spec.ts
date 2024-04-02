@@ -65,6 +65,4 @@ fdescribe('NavbarComponent', () => {
     expect(navigateSpy).toHaveBeenCalledWith('/post/list');  // Verifica que se haya llamado al método con la ruta.
   })
 
-
-
 }); 

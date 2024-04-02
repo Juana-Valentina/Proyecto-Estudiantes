@@ -54,7 +54,7 @@ fdescribe('LoginComponent', () => {
   });
 
   // Prueba para verificar que el método save() sea llamado correctamente con un formulario válido.
-  it('should call save() method with valid form', () => {
+  it('save() method with valid form', () => {
     spyOn(helperService, 'spinnerShow'); // Espía el método spinnerShow del servicio HelperService.
     spyOn(apiService, 'getObs').and.returnValue(of([{ email: 'test@example.com', password: '123456' }])); // Espía el método getObs del servicio ApiService y devuelve un observable mockeado.
 
@@ -65,7 +65,7 @@ fdescribe('LoginComponent', () => {
   });
 
   // Prueba para verificar que el método save() no sea llamado con un formulario inválido.
-  it('should not call save() method with invalid form', () => {
+  it('save() method with invalid form', () => {
     spyOn(helperService, 'spinnerShow'); // Espía el método spinnerShow del servicio HelperService.
 
     component.save(); // Llama al método save del componente sin establecer valores en el formulario.
@@ -74,7 +74,7 @@ fdescribe('LoginComponent', () => {
   });
 
   // Prueba para verificar que el método de visibilidad del password funcione correctamente.
-  it('should toggle password visibility', () => {
+  it('visibility() ', () => {
     const initialValue = component.hide; // Guarda el valor inicial de la visibilidad del password.
     component.visibilidad(); // Llama al método de visibilidad del password.
     const toggledValue = component.hide; // Guarda el valor después de llamar al método.
@@ -83,7 +83,7 @@ fdescribe('LoginComponent', () => {
   });
 
   // Prueba para verificar que el método signUp navegue correctamente a la página de registro.
-  it('should navigate to sign-up page', () => {
+  it('navegacion del signup', () => {
     spyOn(router, 'navigate'); // Espía el método navigate del Router.
 
     component.signUp(); // Llama al método signUp del componente.
@@ -92,7 +92,7 @@ fdescribe('LoginComponent', () => {
   });
 
   // Prueba para verificar que se muestre una alerta de error para credenciales incorrectas.
-  it('should show error alert for incorrect email or password', () => {
+  it('alerta de error para correo y contraseña incorrectas', () => {
     spyOn(apiService, 'getObs').and.returnValue(of([])); // Espía el método getObs del servicio ApiService y devuelve un observable vacío.
     spyOn(helperService, 'spinnerHidder'); // Espía el método spinnerHidder del servicio HelperService.
 
@@ -103,7 +103,7 @@ fdescribe('LoginComponent', () => {
   });
 
   // Prueba para verificar que se maneje correctamente un error de API al intentar iniciar sesión.
-  it('should handle API error on login attempt', () => {
+  it('error de API en login', () => {
     
     spyOn(apiService, 'getObs').and.returnValue(throwError(() => new Error('API error')));  // Espía el método getObs del servicio ApiService y devuelve un error.
     spyOn(helperService, 'spinnerHidder');// Espía el método spinnerHidder del servicio HelperService.

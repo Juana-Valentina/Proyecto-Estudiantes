@@ -1,69 +1,114 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ListAlbumsComponent } from './list-albums.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { of } from 'rxjs';
 import { ApiService } from '../../../services/api.service';
 import { HelperService } from '../../../services/helper.service';
 import { RouterTestingModule } from '@angular/router/testing';
+import { TranslateModule } from '@ngx-translate/core';
+import { of, throwError } from 'rxjs';
+import { apiRouters } from '../../../core/config/apiRouters';
+import { Album } from '../../../shared/interfaces/album';
+import { HttpErrorResponse } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Router } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 fdescribe('ListAlbumsComponent', () => {
   let component: ListAlbumsComponent;
   let fixture: ComponentFixture<ListAlbumsComponent>;
-  let apiService: ApiService;
-  let helperService: HelperService;
+  let apiServiceSpy: jasmine.SpyObj<ApiService>;
+  let helperServiceSpy: jasmine.SpyObj<HelperService>;
   let router: Router;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  // Configuración inicial antes de cada prueba
+  beforeEach(waitForAsync (() => {
+    // Creación de spies para ApiService y HelperService
+    apiServiceSpy = jasmine.createSpyObj<ApiService>('ApiService', ['getOb']);
+    helperServiceSpy = jasmine.createSpyObj<HelperService>('HelperService', ['spinnerHidder', 'spinnerShow', 'alert']);
+
+    // Configuración del módulo de pruebas
+    TestBed.configureTestingModule({
       declarations: [ListAlbumsComponent],
       imports: [
-        HttpClientTestingModule,
         RouterTestingModule,
-        TranslateModule.forRoot() // Asegúrate de importar TranslateModule aquí
+        TranslateModule.forRoot(), 
       ],
       providers: [
-        ApiService,
-        HelperService,
-        TranslateService // Aunque no es necesario explicitamente debido a TranslateModule.forRoot()
-      ]
+        { provide: ApiService, useValue: apiServiceSpy },
+        { provide: HelperService, useValue: helperServiceSpy }
+      ],
+      schemas: [NO_ERRORS_SCHEMA] // Ignora los componentes desconocidos en el DOM
     }).compileComponents();
 
+    // Obtención de instancias de los servicios con TestBed.inject
+    apiServiceSpy = TestBed.inject(ApiService) as jasmine.SpyObj<ApiService>;
+    helperServiceSpy = TestBed.inject(HelperService) as jasmine.SpyObj<HelperService>;
+  }));
+
+  // Configuración adicional antes de cada prueba
+  beforeEach(() => {
     fixture = TestBed.createComponent(ListAlbumsComponent);
     component = fixture.componentInstance;
-    apiService = TestBed.inject(ApiService);
-    helperService = TestBed.inject(HelperService);
-    fixture.detectChanges();
+    router = TestBed.inject(Router);
   });
 
+  // Prueba para asegurar que el componente se crea correctamente
   it('should create', () => {
     expect(component).toBeTruthy();
-    expect(component.ruta).toEqual('home-page'); // Verifica los valores predeterminados o asignados del componente.
-    expect(component.albums).toEqual([]); // Confirma el estado inicial de las propiedades del componente.
   });
 
-  // Verificar la carga inicial de álbumes cuando el componente se inicializa.
-  it('should load albums on init', () => {
-    const mockAlbums = [{ userId: 1, id: 1, title: 'Test Album' }]; // Datos ficticios para simular la respuesta del API.
-    spyOn(apiService, 'getOb').and.returnValue(of(mockAlbums)); // Intercepta llamadas a `getOb` y devuelve un Observable de los datos ficticios.
-
-    component.ngOnInit(); // Ejecuta la lógica de inicialización del componente.
-
-    expect(component.albums.length).toBeGreaterThan; // Espera que la propiedad albums ahora tenga datos.
-    expect(component.albums).toEqual(mockAlbums); // Confirma que los datos cargados coinciden con los datos ficticios.
-    // Verifica que los métodos del servicio helper han sido llamados.
-    expect(helperService.spinnerShow).toHaveBeenCalled(); 
-    expect(helperService.spinnerHidder).toHaveBeenCalled();
+  // Prueba para el método ngOnInit
+  it('#ngOnInit', () => {
+    spyOn(component, 'getAlbums'); // Espía el método getAlbums
+    component.ngOnInit(); // Llama al método ngOnInit del componente
+    expect(component.getAlbums).toHaveBeenCalled(); // Verifica que el método getAlbums haya sido llamado
   });
 
-  // Prueba la funcionalidad de navegación del componente.
-  it('should navigate to post detail', () => {
-    const id = 123; // Define un id de prueba.
-    component.info(id); // Ejecuta la función que debería desencadenar la navegación.
+  // Prueba para el método getAlbums
+  it('#getAlbums() ', () => {
+    const albumsMock: Album[] = [{ userId: 1, id: 1, title: 'Album 1' }, { userId: 1, id: 2, title: 'Album 2' }];
 
-     // Verifica que se llamó al método navigate con los argumentos.
-    expect(router.navigate).toHaveBeenCalledWith(['post/detail'], { queryParams: { id } });
+    apiServiceSpy.getOb.and.returnValue(of(albumsMock)); // Configura el ApiService para devolver un observable de albumsMock
+
+    component.ngOnInit(); // Llama al método ngOnInit del componente
+
+    // Verifica que los servicios spinnerShow y getOb hayan sido llamados con los parámetros correctos
+    expect(helperServiceSpy.spinnerShow).toHaveBeenCalled();
+    expect(apiServiceSpy.getOb).toHaveBeenCalledWith(apiRouters.POST_GET);
+
+    // Utiliza whenStable para asegurarse de que todas las tareas asíncronas hayan finalizado antes de continuar con las expectativas
+    fixture.whenStable().then(() => {
+      expect(component.albums).toEqual(albumsMock); // Verifica que la propiedad albums se haya establecido correctamente
+      expect(helperServiceSpy.spinnerHidder).toHaveBeenCalled(); // Verifica que el servicio spinnerHidder haya sido llamado
+    });
   });
+
+  // Prueba para manejar errores correctamente
+  it('should handle error properly', () => {
+    const errorResponse = new HttpErrorResponse({ error: 'test error', status: 404 });
+
+    apiServiceSpy.getOb.and.returnValue(throwError(errorResponse)); // Configura el ApiService para devolver un error
+
+    component.ngOnInit(); // Llama al método ngOnInit del componente
+
+    // Verifica que los servicios spinnerShow y getOb hayan sido llamados con los parámetros correctos
+    expect(helperServiceSpy.spinnerShow).toHaveBeenCalled();
+    expect(apiServiceSpy.getOb).toHaveBeenCalledWith(apiRouters.POST_GET);
+
+    // Utiliza whenStable para asegurarse de que todas las tareas asíncronas hayan finalizado antes de continuar con las expectativas
+    fixture.whenStable().then(() => {
+      expect(helperServiceSpy.spinnerHidder).toHaveBeenCalled(); // Verifica que el servicio spinnerHidder haya sido llamado
+      expect(helperServiceSpy.alert).toHaveBeenCalledWith('error', 'error', 'error'); // Verifica que el servicio alert haya sido llamado con los parámetros correctos
+    });
+  });
+
+  // Prueba para el método info
+  it('#info()', () => {
+    const navigateSpy = spyOn(router, 'navigateByUrl'); // Espía el método navigateByUrl del router
+
+    const id = 123;
+    component.info(id); // Llama al método info con un id específico
+
+    // Verifica que el método navigateByUrl del router haya sido llamado con la ruta correcta
+    expect(navigateSpy).toHaveBeenCalledWith(`post/detail?id=${id}`);
+  });
+
 });

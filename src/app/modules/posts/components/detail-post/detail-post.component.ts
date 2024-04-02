@@ -1,14 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ApiService } from '../../../../services/api.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { apiRouters } from '../../../../core/config/apiRouters';
-import { CommonModule } from '@angular/common';
-import { HelperService } from '../../../../services/helper.service';
-import { MaterialModule } from '../../../material/material.module';
-import { CommentModule } from '../../../comments/comment/comment.module';
-import { TranslateModule } from '@ngx-translate/core';
+import { CommonModule } from "@angular/common";
+import { Component } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { TranslateModule } from "@ngx-translate/core";
 import { ComponentsModule } from "../../../../components/components.module";
+import { apiRouters } from "../../../../core/config/apiRouters";
+import { ApiService } from "../../../../services/api.service";
+import { HelperService } from "../../../../services/helper.service";
+import { CommentModule } from "../../../comments/comment/comment.module";
+import { MaterialModule } from "../../../material/material.module";
 
 @Component({
     selector: 'app-detail-post',
@@ -40,21 +39,25 @@ export class DetailPostComponent {
       },
       error:(err)=>{
         this.router.navigateByUrl('post/list');
+        console.log(err);
+        
       }
     })
     
   }
 
-  getDetail(id: number): void{
-    this.helperService.spinnerShow();
-    this.api.getPr(apiRouters.POST_GET + `/${id}`).then((resp: any) =>{
+getDetail(id: number): void {
+  this.helperService.spinnerShow();
+  this.api.getPr(apiRouters.POST_GET + `/${id}`)
+    .then((resp: any) => {
       this.post = resp;
       this.helperService.spinnerHidder();
-    }).catch(err=>{
-      this.helperService.spinnerHidder();
-      this.helperService.alert('error', 'error', 'error')
     })
-  }
+    .catch(err => {
+      this.helperService.spinnerHidder();
+      this.helperService.alert('error', 'Error', 'error');
+    });
+}
 
   verComments(): void {
     this.showComments = !this.showComments;

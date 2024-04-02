@@ -13,10 +13,7 @@ import { Expresionesr } from "../../../core/config/expresiones-r";
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent implements OnInit {
-  visibilidad(): void {
-    this.hide = !this.hide; 
-  }
-  
+ 
   @Input() icon1 = 'email';
   hide: boolean = true ;
   name = new FormControl('');
@@ -77,6 +74,10 @@ export class RegisterComponent implements OnInit {
           console.log(err);
         }
       });
-    } //cierre del save
+    } 
+    
+    visibilidad(): void {
+      this.hide = !this.hide; 
+    }
   
   }

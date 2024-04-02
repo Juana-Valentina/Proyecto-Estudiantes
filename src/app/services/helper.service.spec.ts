@@ -1,97 +1,132 @@
-import { TestBed } from '@angular/core/testing';
-
+import { TestBed, async, waitForAsync } from '@angular/core/testing';
 import { HelperService } from './helper.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { TranslateService } from '@ngx-translate/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ApiService } from './api.service';
+import Swal from 'sweetalert2';
+import { MaterialModule } from '../modules/material/material.module';
+import { FormControl, FormGroup, FormsModule } from '@angular/forms';
 
 fdescribe('HelperService', () => {
   let service: HelperService;
-  let spinnerServiceSpy: jasmine.SpyObj<NgxSpinnerService>;
-  let translateServiceSpy: jasmine.SpyObj<TranslateService>;
+  let spinnerService: NgxSpinnerService;
+  let translateService: TranslateService;
 
-  beforeEach(() => {
-    spinnerServiceSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
-    translateServiceSpy = jasmine.createSpyObj('TranslateService', ['instant']);
-
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      imports: [TranslateModule.forRoot(), MaterialModule, FormsModule],
       providers: [
         HelperService,
-        { provide: NgxSpinnerService, useValue: spinnerServiceSpy },
-        { provide: TranslateService, useValue: translateServiceSpy }
+        NgxSpinnerService,
+        TranslateService,
+        ApiService
       ]
-    });
+    }).compileComponents();
+  }));
+
+  beforeEach(() => {
     service = TestBed.inject(HelperService);
+    spinnerService = TestBed.inject(NgxSpinnerService);
+    translateService = TestBed.inject(TranslateService);
   });
 
+  // Prueba para asegurar que el servicio se crea correctamente
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  // Prueba para verificar si el spinner se muestra correctamente
-  it('should show spinner', () => {
+  // Prueba para el método spinnerShow()
+  it('spinnerShow()', () => {
+    spyOn(spinnerService, 'show');
     service.spinnerShow();
-    expect(spinnerServiceSpy.show).toHaveBeenCalled(); // Se verifica que el método show del NgxSpinnerService haya sido llamado
+    expect(spinnerService.show).toHaveBeenCalled();
   });
 
-  // Prueba para verificar si el spinner se oculta correctamente
-  it('should hide spinner', () => {
+  // Prueba para el método spinnerHidder()
+  it('spinnerHidder()', () => {
+    spyOn(spinnerService, 'hide');
     service.spinnerHidder();
-    expect(spinnerServiceSpy.hide).toHaveBeenCalled();
+    expect(spinnerService.hide).toHaveBeenCalled();
   });
 
-  // Prueba para verificar si la alerta se muestra correctamente con el texto traducido
-  it('should display alert with translated text', () => {
-    // Se simulan las traducciones para el título, el texto y el botón de cierre
-    translateServiceSpy.instant.and.returnValues('Translated Title', 'Translated Text', 'CLOSE');
-    // Se llama al método alert del servicio con los parámetros específicos
+  // Prueba para el método alert()
+  it('alert()', () => {
+    spyOn(Swal, 'fire');
+    spyOn(translateService, 'instant').and.returnValue('Translated Text');
+
     service.alert('Title', 'Text', 'success', 30000);
-    // Se verifica que los métodos de traducción se hayan llamado con los parámetros correctos
-    expect(translateServiceSpy.instant).toHaveBeenCalledWith('Title');
-    expect(translateServiceSpy.instant).toHaveBeenCalledWith('Text');
-    expect(translateServiceSpy.instant).toHaveBeenCalledWith('CLOSE');
-  });
 
-  // Prueba para verificar si se marcan todos los controles de formulario como "touched"
-  it('should mark all form controls as touched', () => {
-    // Se crea un objeto simulado de FormGroup con controles simulados
-    const mockFormGroup = {
-      controls: {
-        control1: { markAsTouched: jasmine.createSpy() }, // Espía para marcar como "touched" el control1
-        control2: { markAsTouched: jasmine.createSpy() }
+    expect(translateService.instant).toHaveBeenCalledTimes(3);
+    expect(translateService.instant).toHaveBeenCalledWith('Title');
+    expect(translateService.instant).toHaveBeenCalledWith('Text');
+    expect(translateService.instant).toHaveBeenCalledWith('CLOSE');
+
+    expect(Swal.fire).toHaveBeenCalledWith({
+      title: 'Translated Text',
+      text: 'Translated Text',
+      icon: 'success',
+      confirmButtonText: 'Translated Text',
+      customClass: {
+        confirmButton: 'btn btn-outline-primary'
       }
-    };
-    service.field(mockFormGroup as any); // Se llama al método field del servicio con el formulario simulado
-    // Se verifica que los métodos markAsTouched de los controles se hayan llamado
-    expect(mockFormGroup.controls.control1.markAsTouched).toHaveBeenCalled();
-    expect(mockFormGroup.controls.control2.markAsTouched).toHaveBeenCalled();
+    } as any);
   });
 
-  // Prueba para verificar si se obtiene el valor del almacenamiento local correctamente
-  it('should return value from local storage', () => {
-    // Se simula el método getItem del localStorage para devolver un valor específico
-    spyOn(localStorage, 'getItem').and.returnValue('value');
-    // Se llama al método getLocalStorage del servicio para obtener el valor del almacenamiento local
-    const result = service.getLocalStorage('item');
-    // Se verifica que el valor devuelto sea igual al valor simulado
-    expect(result).toEqual('value');
-    // Se verifica que el método getItem del localStorage haya sido llamado con el parámetro correcto
-    expect(localStorage.getItem).toHaveBeenCalledWith('item');
+  // Prueba para el método field() marcando todos los controles
+  it('field() should mark all controls ', () => {
+    const formGroup = new FormGroup({
+      name: new FormControl('John'),
+      email: new FormControl('john@example.com')
+    });
+
+    service.field(formGroup);
+
+    expect(formGroup.controls['name'].touched).toBeTruthy();
+    expect(formGroup.controls['email'].touched).toBeTruthy();
   });
 
-  // Prueba para verificar si se establece el valor en el almacenamiento local correctamente
-  it('should set value in local storage', () => {
-    spyOn(localStorage, 'setItem'); // Se simula el método setItem del localStorage 
-    service.setLocalStorage('key', 'value'); // Se llama al método setLocalStorage del servicio
-    // Se verifica que el método setItem del localStorage haya sido llamado con los parámetros correctos
-    expect(localStorage.setItem).toHaveBeenCalledWith('key', 'value');
+  // Otra prueba para el método field() marcando los controles del FormGroup
+  it('field() FormGroup controls', () =>  {
+    const nestedGroup = new FormGroup({
+      nestedControl: new FormControl('Nested John')
+    });
+    const formGroup = new FormGroup({
+      name: new FormControl('John'),
+      nestedGroup: nestedGroup
+    });
+  
+    service.field(formGroup);
+  
+    expect(formGroup.controls.name.touched).toBeTrue();
+    expect(formGroup.controls.nestedGroup.touched).toBeFalse();
+    expect(nestedGroup.controls.nestedControl.touched).toBeTrue();
   });
 
-  // Prueba para verificar si se elimina un elemento del almacenamiento local correctamente
-  it('should remove item from local storage', () => {
-    spyOn(localStorage, 'removeItem'); // Se simula el método removeItem del localStorage
-    service.deleteLocalStorage('item'); // Se llama al método deleteLocalStorage del servicio
-    // Se verifica que el método removeItem del localStorage haya sido llamado con el parámetro correcto
-    expect(localStorage.removeItem).toHaveBeenCalledWith('item');
+  // Prueba para el método getLocalStorage()
+  it('getLocalStorage()', () => {
+    localStorage.setItem('testItem', 'testValue');
+
+    const result = service.getLocalStorage('testItem');
+
+    expect(result).toEqual('testValue');
   });
+
+  // Prueba para el método getLocalStorage() cuando no se encuentra el elemento
+  it('getLocalStorage() return', () => {
+    localStorage.removeItem('nonexistentItem');
+
+    const result = service.getLocalStorage('nonexistentItem');
+
+    expect(result).toBeUndefined;
+  });
+
+  // Prueba para el método deleteLocalStorage()
+  it('deleteLocalStorage()', () => {
+    localStorage.setItem('itemToDelete', 'value');
+
+    service.deleteLocalStorage('itemToDelete');
+
+    expect(localStorage.getItem('itemToDelete')).toBeNull();
+  });
+  
 });

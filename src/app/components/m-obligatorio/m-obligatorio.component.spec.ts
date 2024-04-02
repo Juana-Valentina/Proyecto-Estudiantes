@@ -8,13 +8,12 @@ describe('MObligatorioComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MObligatorioComponent]
-    })
-    .compileComponents();
-    
+      declarations: [MObligatorioComponent] 
+    }).compileComponents(); 
+
     fixture = TestBed.createComponent(MObligatorioComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    fixture.detectChanges(); // Detecta los cambios
   });
 
   it('should create', () => {

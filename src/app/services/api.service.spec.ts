@@ -1,243 +1,415 @@
-import { TestBed } from '@angular/core/testing';
-
-import { ApiService } from './api.service'; 
-import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { TestBed, async } from '@angular/core/testing';
+import { ApiService } from './api.service';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { HelperService } from './helper.service';
 import { environment } from '../../environments/environment';
 
 fdescribe('ApiService', () => {
   let service: ApiService;
-  let httpMock: HttpTestingController;
-
-  beforeEach(() => {
-    const apiServiceSpy = jasmine.createSpyObj<ApiService>('ApiService', ['getPr', 'getPro', 'getOb', 'getObs', 'postPr', 'postPro', 'postOb', 'postObs', 'putPr', 'putPro', 'putOb', 'putObs', 'deletePr', 'deletePro' , 'deleteOb', 'deleteObs']);
-    const helperServiceSpy = jasmine.createSpyObj<HelperService>('HelperService', ['alert', 'translateService', 'spinnerHidder', 'spinnerShow']);
-
+  let httpMock: HttpTestingController; // Controlador para mockear peticiones HTTP 
+    
+  beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [
-        { provide: ApiService, useValue: apiServiceSpy },
-        { provide: HelperService, useValue: helperServiceSpy }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
-    });
-    service = TestBed.inject(ApiService);
-    httpMock = TestBed.inject(HttpTestingController);
+      providers: [ApiService]
+    }).compileComponents();
+  }));
+
+  // Configuración antes de cada prueba
+  beforeEach(() => {
+    service = TestBed.inject(ApiService); // Se obtiene la instancia del servicio ApiService
+    httpMock = TestBed.inject(HttpTestingController); // Se obtiene el controlador HttpTestingController para simular peticiones HTTP
   });
 
+  // Prueba para asegurar que el servicio se crea correctamente
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  // Prueba para el método getPr   
-  it('#getPr', () => { // Respuesta simulada
-    const mockResponse = {}; 
-    service.getPr('testRoute').then(response => {
-      expect(response).toEqual(mockResponse); // Verifica que la respuesta sea igual a la respuesta simulada
+  // Métodos de prueba para GET
+  it('#getPr()', async(() => {
+    // Datos de prueba
+    const testData = {id: 1, name: 'John'};
+    const route = 'exampleRoutePr';
+
+    // Llamada al método getPr del servicio 
+    service.getPr(route).then(data => { 
+      expect(data).toEqual(testData); // Verifica que los datos recibidos sean iguales a los datos de prueba
+    }).catch(err => {
+      fail(err) // Si hay un error, marca la prueba como fallida
     });
 
-    const req = httpMock.expectOne(`${environment.DOMAIN}testRoute`); // hace una petición HTTP a la URL específica
-    expect(req.request.method).toBe('GET'); // Verifica que el método de la petición sea GET
-    req.flush(mockResponse); // Simula la respuesta de la petición
-  });
-
-  it('#getPro', (done: DoneFn) => {
-    const mockData = {};  // Define la respuesta simulada
-    
-    service.getPro('testEndpoint').then(data => {
-      expect(data).toEqual(mockData); // Verifica que los datos recibidos sean igual a los datos simulados 
-      done();
-    });
-  
-    const req = httpMock.expectOne(`${environment.DOMAIN}testEndpoint`); // Verifica que la petición sea al endpoint correcto
-    expect(req.request.method).toBe('GET'); // Verifica que el método de la petición sea GET
-    req.flush(mockData); // Simula la respuesta
-  });
-
-  it('#getOb', () => {
-    const mockData = {}; 
-  
-    service.getOb('testEndpoint').subscribe(data => {
-      expect(data).toEqual(mockData);
-    });
-  
-    const req = httpMock.expectOne(`${environment.DOMAIN}testEndpoint`);
+    // Espera una petición HTTP y verifica que sea GET
+    const req = httpMock.expectOne(environment.DOMAIN + route);
     expect(req.request.method).toBe('GET');
-    req.flush(mockData);
-  });
+    req.flush(testData)
+  }));
 
-  it('#getObs', () => {
-    const mockData = [{}]; 
-  
-    service.getObs('testEndpoint').subscribe({
-      next: data => {
-        expect(data).toEqual(mockData);
-      },
+  // Método para realizar una petición GET con opción de usar una API de prueba
+  it('#getPro()', async(() => {
+    const testData = {id: 1, name: 'John'};
+    const route = 'exampleRoutePro';
+    const useMockApi = false;
+
+      service.getPro(route, useMockApi).then(data => {
+        expect(data).toEqual(testData);
+      }).catch(err => {
+        fail(err)
+      });
+
+      const req = httpMock.expectOne(useMockApi ? environment.DOMAIN_MOCKAPI + route : environment.DOMAIN + route);
+      expect(req.request.method).toBe('GET');
+      req.flush(testData)
+}));
+
+  // Método para realizar una petición GET y obtener un Observable
+  it('#getOb()', async(() => {
+    const testData = {id: 1, name: 'John'};
+    const route = 'exampleRouteOb';
+
+    service.getOb(route).subscribe(data => {
+      expect(data).toEqual(testData);
     });
-  
-    const req = httpMock.expectOne(`${environment.DOMAIN}testEndpoint`);
+
+    const req = httpMock.expectOne(environment.DOMAIN + route);
     expect(req.request.method).toBe('GET');
-    req.flush(mockData);
-  });
+    req.flush(testData)
+  }));
 
-  it('#postPr', async () => {
-    const mockResponse = {}; 
-    const testData = { key: 'value' }; 
-  
-    const result = await service.postPr('testEndpoint', testData);
-    expect(result).toEqual(mockResponse);
-  
-    const req = httpMock.expectOne(`${environment.DOMAIN}testEndpoint`);
+  // Método para realizar una petición GET y obtener un Observable con opción de usar una API de prueba
+  it('#getObs()', async(() => {
+    const testData = {id: 1, name: 'John'};
+    const route = 'exampleRouteObs';
+    const useMockApi = true;
+
+    service.getObs(route, useMockApi).subscribe(data => {
+      expect(data).toEqual(testData);
+    });
+
+    const req = httpMock.expectOne(useMockApi ? environment.DOMAIN_MOCKAPI + route : environment.DOMAIN + route);
+    expect(req.request.method).toBe('GET');
+    req.flush(testData)
+  }));
+
+ // Método para realizar una petición POST estándar
+  it('#postPr()', async(() => {
+    const testData = {id: 1, name: 'John'};
+    const route = 'exampleRoutePr';
+    const postData = {key: 'value'};
+
+    service.postPr(route, postData).then(data => {
+      expect(data).toEqual(testData);
+    }).catch(err => {
+      fail(err)
+    });
+
+    const req = httpMock.expectOne(environment.DOMAIN + route);
     expect(req.request.method).toBe('POST');
-    req.flush(mockResponse);
-  });
+    req.flush(testData)
+  }));
 
-  it('#postPro', (done: DoneFn) => {
-    const mockResponse = {}; 
-    const testData = { key: 'value' }; 
-  
-    service.postPro('testEndpoint', testData).then(data => {
-      expect(data).toEqual(mockResponse);
-      done();
+  // Método para realizar una petición POST con opción de usar una API de prueba
+  it('#postPro()', async(() => {
+    const testData = {id: 1, name: 'John'};
+    const route = 'exampleRoutePro';
+    const useMockApi = false;
+    const postData = {key: 'value'}
+
+    service.postPro(route, postData, useMockApi).then(data => {
+      expect(data).toEqual(testData);
+    }).catch(err => {
+      fail(err)
     });
-  
-    const req = httpMock.expectOne(`${environment.DOMAIN}testEndpoint`);
+
+    const req = httpMock.expectOne(useMockApi ? environment.DOMAIN_MOCKAPI + route : environment.DOMAIN + route);
     expect(req.request.method).toBe('POST');
-    req.flush(mockResponse);
-  });
+    req.flush(testData)
+  }));
 
-  it('#postOb', () => {
-    const mockResponse = {}; 
-    const testData = { key: 'value' };
-  
-    service.postOb('testEndpoint', testData).subscribe(data => {
-      expect(data).toEqual(mockResponse);
+// Método para realizar una petición POST y obtener un Observable
+  it('#postOb()', async(() => {
+    const testData = {id: 1, name: 'John'};
+    const route = 'exampleRouteOb';
+    const postData = {key: 'value'};
+
+    service.postOb(route, postData).subscribe(data => {
+      expect(data).toEqual(testData);
     });
-  
-    const req = httpMock.expectOne(`${environment.DOMAIN}testEndpoint`);
+
+    const req = httpMock.expectOne(environment.DOMAIN + route);
     expect(req.request.method).toBe('POST');
-    req.flush(mockResponse);
-  });
+    req.flush(testData)
+  }));
 
-  it('#postObs', () => {
-    const mockResponse = [{}]; 
-    const testData = { key: 'value' };
-  
-    service.postObs('testEndpoint', testData).subscribe({
-      next: data => {
-        expect(data).toEqual(mockResponse);
-      },
+  // Método para realizar una petición POST y obtener un Observable con opción de usar una API de prueba
+  it('#postObs()', async(() => {
+    const testData = {id: 1, name: 'John'};
+    const route = 'exampleRouteObs';
+    const useMockApi = true;
+    const postData = {key: 'value'};
+
+    service.postObs(route, postData, useMockApi).subscribe(data => {
+      expect(data).toEqual(testData);
     });
-  
-    const req = httpMock.expectOne(`${environment.DOMAIN}testEndpoint`);
+
+    const req = httpMock.expectOne(useMockApi ? environment.DOMAIN_MOCKAPI + route : environment.DOMAIN + route);
     expect(req.request.method).toBe('POST');
-    req.flush(mockResponse);
-  });
+    req.flush(testData)
+  }));
 
-  it('#putOb', () => {
-    const mockResponse = {}; 
-    const testData = { key: 'value' };
-  
-    service.putOb('testEndpoint', testData).subscribe(data => {
-      expect(data).toEqual(mockResponse);
-    });
-  
-    const req = httpMock.expectOne(`${environment.DOMAIN}testEndpoint`);
-    expect(req.request.method).toEqual('PUT');
-    req.flush(mockResponse);
-  });
+  // Método para realizar una petición PUT estándar
+  it('#putPr()', async(() => {
+    const testData = {id: 1, name: 'John'};
+    const route = 'exampleRoutePr';
+    const putData = {key: 'value'};
 
-  it('#putObs', () => {
-    const mockResponse = {}; 
-    const testData = { key: 'value' };
-  
-    service.putObs('testEndpoint', testData).subscribe(data => {
-      expect(data).toEqual(mockResponse);
+    service.putPr(route, putData).then(data => {
+      expect(data).toEqual(testData);
+    }).catch(err => {
+      fail(err)
     });
-  
-    const req = httpMock.expectOne(`${environment.DOMAIN}testEndpoint`);
+
+    const req = httpMock.expectOne(environment.DOMAIN + route);
     expect(req.request.method).toBe('PUT');
-    req.flush(mockResponse);
-  });
+    req.flush(testData)
+  }));
 
-  it('#putPr', async () => {
-    const mockResponse = {}; 
-    const testData = { key: 'value' };
-  
-    const result = await service.putPr('testEndpoint', testData);
-    expect(result).toEqual(mockResponse);
-  
-    const req = httpMock.expectOne(`${environment.DOMAIN}testEndpoint`);
+// Método para realizar una petición PUT con opción de usar una API de prueba
+  it('#putPro()', async(() => {
+    const testData = {id: 1, name: 'John'};
+    const route = 'exampleRoutePro';
+    const useMockApi = false;
+    const putData = {key: 'value'}
+
+    service.putPro(route, putData, useMockApi).then(data => {
+      expect(data).toEqual(testData);
+    }).catch(err => {
+      fail(err)
+    });
+
+    const req = httpMock.expectOne(useMockApi ? environment.DOMAIN_MOCKAPI + route : environment.DOMAIN + route);
     expect(req.request.method).toBe('PUT');
-    req.flush(mockResponse);
-  });
+    req.flush(testData)
+  }));
 
-  it('#putPro', (done: DoneFn) => {
-    const mockResponse = {}; 
-    const testData = { key: 'value' };
-  
-    service.putPro('testEndpoint', testData).then(data => {
-      expect(data).toEqual(mockResponse);
-      done();
+// Método para realizar una petición PUT y obtener un Observable
+  it('#putOb()', async(() => {
+    const testData = {id: 1, name: 'John'};
+    const route = 'exampleRouteOb';
+    const putData = {key: 'value'};
+
+    service.putOb(route, putData).subscribe(data => {
+      expect(data).toEqual(testData);
     });
-  
-    const req = httpMock.expectOne(`${environment.DOMAIN}testEndpoint`);
+
+    const req = httpMock.expectOne(environment.DOMAIN + route);
     expect(req.request.method).toBe('PUT');
-    req.flush(mockResponse);
-  });
+    req.flush(testData)
+  }));
 
-  it('#deleteOb', () => {
-    const endpoint = 'testEndpoint/1'; 
-    const mockResponse = {}; 
-  
-    service.deleteOb(endpoint).subscribe(data => {
-      expect(data).toEqual(mockResponse);
+// Método para realizar una petición PUT y obtener un Observable con opción de usar una API de prueba
+  it('#putObs()', async(() => {
+    const testData = {id: 1, name: 'John'};
+    const route = 'exampleRouteObs';
+    const useMockApi = true;
+    const putData = {key: 'value'};
+
+    service.putObs(route, putData, useMockApi).subscribe(data => {
+      expect(data).toEqual(testData);
     });
-  
-    const req = httpMock.expectOne(`${environment.DOMAIN}${endpoint}`);
-    expect(req.request.method).toBe('DELETE');
-    req.flush(mockResponse);
-  });
 
-  it('#deleteObs', () => {
-    const endpoint = 'testEndpoint/1';
-    const mockResponse = {};
-  
-    service.deleteObs(endpoint).subscribe(data => {
-      expect(data).toEqual(mockResponse);
+    const req = httpMock.expectOne(useMockApi ? environment.DOMAIN_MOCKAPI + route : environment.DOMAIN + route);
+    expect(req.request.method).toBe('PUT');
+    req.flush(testData)
+  }));
+
+  // Método para realizar una petición DELETE estándar
+  it('#deletePr()', async(() => {
+    const testData = {id: 1, name: 'John'};
+    const route = 'exampleRoutePr';
+
+    service.deletePr(route).then(data => {
+      expect(data).toEqual(testData);
+    }).catch(err => {
+      fail(err)
     });
-  
-    const req = httpMock.expectOne(`${environment.DOMAIN}${endpoint}`);
-    expect(req.request.method).toBe('DELETE');
-    req.flush(mockResponse);
-  });
 
-  it('#deletePr', async () => {
-    const endpoint = 'testEndpoint/1';
-    const mockResponse = {}; 
-  
-    const result = await service.deletePr(endpoint);
-    expect(result).toEqual(mockResponse);
-  
-    const req = httpMock.expectOne(`${environment.DOMAIN}${endpoint}`);
+    const req = httpMock.expectOne(environment.DOMAIN + route);
     expect(req.request.method).toBe('DELETE');
-    req.flush(mockResponse);
-  });
+    req.flush(testData)
+  }));
 
-  it('#deletePro', (done: DoneFn) => {
-    const endpoint = 'testEndpoint/1';
-    const mockResponse = {}; 
-  
-    service.deletePro(endpoint).then(data => {
-      expect(data).toEqual(mockResponse);
-      done();
+// Método para realizar una petición DELETE con opción de usar una API de prueba
+  it('#deletePro()', async(() => {
+    const testData = {id: 1, name: 'John'};
+    const route = 'exampleRoutePro';
+    const useMockApi = false;
+
+    service.deletePro(route, useMockApi).then(data => {
+      expect(data).toEqual(testData);
+    }).catch(err => {
+      fail(err)
     });
-  
-    const req = httpMock.expectOne(`${environment.DOMAIN}${endpoint}`);
+
+    const req = httpMock.expectOne(useMockApi ? environment.DOMAIN_MOCKAPI + route : environment.DOMAIN + route);
     expect(req.request.method).toBe('DELETE');
-    req.flush(mockResponse);
-  });
- 
+    req.flush(testData)
+  }));
+
+// Método para realizar una petición DELETE y obtener un Observable
+  it('#deleteOb()', async(() => {
+    const testData = {id: 1, name: 'John'};
+    const route = 'exampleRouteOb';
+
+    service.deleteOb(route).subscribe(data => {
+      expect(data).toEqual(testData);
+    });
+
+    const req = httpMock.expectOne(environment.DOMAIN + route);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(testData)
+  }));
+
+// Método para realizar una petición DELETE y obtener un Observable con opción de usar una API de prueba
+  it('#deleteObs()', async(() => {
+    const testData = {id: 1, name: 'John'};
+    const route = 'exampleRouteObs';
+    const useMockApi = true;
+
+    service.deleteObs(route, useMockApi).subscribe(data => {
+      expect(data).toEqual(testData);
+    });
+
+    const req = httpMock.expectOne(useMockApi ? environment.DOMAIN_MOCKAPI + route : environment.DOMAIN + route);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(testData)
+  }));
+
+  // Prueba para manejar errores en el método getPr
+  it('handle error getpr', async(() => {
+    const route = 'exampleRoute';
+    service.getPr(route).then(data => {
+      fail('Request should have failed'); // La petición debería haber fallado, si no, marca la prueba como fallida
+    }).catch(err => {
+      expect(err).toBeTruthy(); // Verifica que se haya recibido un error
+    });
+
+    // Espera una petición HTTP y simula un error
+    const req = httpMock.expectOne(environment.DOMAIN + route);
+    expect(req.request.method).toBe('GET');
+    req.error(new ErrorEvent('Network error')); // Simula un error de red
+  }));
+
+// Prueba para manejar errores en el método getPro
+  it('handle error getpro', async(() => {
+    const route = 'exampleRoutePro';
+    const useMockApi = false;
+
+    service.getPro(route, useMockApi).then(data => {
+      fail('Request should have failed'); // La petición debería haber fallado, si no, marca la prueba como fallida
+    }).catch(err => {
+      expect(err).toBeTruthy(); // Verifica que se haya recibido un error
+    });
+
+    const req = httpMock.expectOne(useMockApi ? environment.DOMAIN_MOCKAPI + route : environment.DOMAIN + route);
+    expect(req.request.method).toBe('GET');
+    req.error(new ErrorEvent('Network error'));
+  }));
+
+  // Prueba para manejar errores en el método postPr
+  it('handle error postPr', async(() => {
+    const route = 'exampleRoute';
+    const postData = { key: 'value' };
+
+    service.postPr(route, postData).then(data => {
+      fail('Request should have failed'); // La petición debería haber fallado, si no, marca la prueba como fallida
+    }).catch(err => {
+      expect(err).toBeTruthy(); // Verifica que se haya recibido un error
+    });
+
+    const req = httpMock.expectOne(environment.DOMAIN + route);
+    expect(req.request.method).toBe('POST');
+    req.error(new ErrorEvent('Network error'));
+  }));
+
+// Prueba para manejar errores en el método postPro
+  it('handle error postPro', async(() => {
+    const route = 'exampleRoutePro';
+    const useMockApi = false;
+    const postData = { key: 'value' };
+
+    service.postPro(route, postData, useMockApi).then(data => {
+      fail('Request should have failed'); // La petición debería haber fallado, si no, marca la prueba como fallida
+    }).catch(err => {
+      expect(err).toBeTruthy(); // Verifica que se haya recibido un error
+    });
+
+    const req = httpMock.expectOne(useMockApi ? environment.DOMAIN_MOCKAPI + route : environment.DOMAIN + route);
+    expect(req.request.method).toBe('POST');
+    req.error(new ErrorEvent('Network error'));
+  }));
+
+  // Prueba para manejar errores en el método putPr
+  it('handle error putPr', async(() => {
+    const route = 'exampleRoute';
+    const putData = { key: 'value' };
+
+    service.putPr(route, putData).then(data => {
+      fail('Request should have failed'); // La petición debería haber fallado, si no, marca la prueba como fallida
+    }).catch(err => {
+      expect(err).toBeTruthy(); // Verifica que se haya recibido un error
+    });
+
+    const req = httpMock.expectOne(environment.DOMAIN + route);
+    expect(req.request.method).toBe('PUT');
+    req.error(new ErrorEvent('Network error'));
+  }));
+
+// Prueba para manejar errores en el método putPro
+  it('handle error putPro', async(() => {
+    const route = 'exampleRoutePro';
+    const useMockApi = false;
+    const putData = { key: 'value' };
+
+    service.putPro(route, putData, useMockApi).then(data => {
+      fail('Request should have failed'); // La petición debería haber fallado, si no, marca la prueba como fallida
+    }).catch(err => {
+      expect(err).toBeTruthy(); // Verifica que se haya recibido un error
+    });
+
+    const req = httpMock.expectOne(useMockApi ? environment.DOMAIN_MOCKAPI + route : environment.DOMAIN + route);
+    expect(req.request.method).toBe('PUT');
+    req.error(new ErrorEvent('Network error'));
+  }));
+
+  // Prueba para manejar errores en el método deletePr
+  it('handle error deletePr', async(() => {
+    const route = 'exampleRoute';
+    service.deletePr(route).then(data => {
+      fail('Request should have failed'); // La petición debería haber fallado, si no, marca la prueba como fallida
+    }).catch(err => {
+      expect(err).toBeTruthy(); // Verifica que se haya recibido un error
+    });
+
+    const req = httpMock.expectOne(environment.DOMAIN + route);
+    expect(req.request.method).toBe('DELETE');
+    req.error(new ErrorEvent('Network error'));
+  }));
+
+// Prueba para manejar errores en el método deletePro
+  it('handle error deletePro', async(() => {
+    const route = 'exampleRoutePro';
+    const useMockApi = false;
+
+    service.deletePro(route, useMockApi).then(data => {
+      fail('Request should have failed'); // La petición debería haber fallado, si no, marca la prueba como fallida
+    }).catch(err => {
+      expect(err).toBeTruthy(); // Verifica que se haya recibido un error
+    });
+
+    const req = httpMock.expectOne(useMockApi ? environment.DOMAIN_MOCKAPI + route : environment.DOMAIN + route);
+    expect(req.request.method).toBe('DELETE');
+    req.error(new ErrorEvent('Network error'));
+  }));
+
 }); //final
-
